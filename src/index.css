@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 220 25% 8%;
+    --foreground: 180 100% 95%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 220 25% 10%;
+    --popover-foreground: 180 100% 95%;
+
+    --primary: 190 95% 55%;
+    --primary-foreground: 220 25% 8%;
+
+    --secondary: 280 70% 60%;
+    --secondary-foreground: 180 100% 95%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 180 30% 70%;
+
+    --accent: 150 85% 55%;
+    --accent-foreground: 220 25% 8%;
+
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 180 100% 95%;
+
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 190 95% 55%;
+
+    --radius: 0.75rem;
+
+    --chart-1: 190 95% 55%;
+    --chart-2: 280 70% 60%;
+    --chart-3: 150 85% 55%;
+    --chart-4: 45 90% 60%;
+    --chart-5: 320 75% 60%;
+
+    --glow-primary: 0 0 20px hsla(190, 95%, 55%, 0.5);
+    --glow-secondary: 0 0 20px hsla(280, 70%, 60%, 0.5);
+    --glow-accent: 0 0 20px hsla(150, 85%, 55%, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-secondary {
+    box-shadow: var(--glow-secondary);
+  }
+
+  .glow-accent {
+    box-shadow: var(--glow-accent);
+  }
+
+  .metric-card {
+    @apply bg-card border border-border rounded-lg p-6 transition-all duration-300 hover:border-primary/50;
+  }
+
+  .metric-card:hover {
+    box-shadow: 0 0 30px hsla(190, 95%, 55%, 0.2);
+  }
+}
