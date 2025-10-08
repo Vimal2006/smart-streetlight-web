@@ -1,30 +1,10 @@
-import { useState, useEffect } from "react";
 import { Lightbulb, CloudRain, Thermometer, Droplets } from "lucide-react";
 import MetricCard from "@/components/MetricCard";
 import Navigation from "@/components/Navigation";
+import { useStreetlightData } from "@/hooks/useStreetlightData";
 
 const Dashboard = () => {
-  // Simulated real-time data
-  const [metrics, setMetrics] = useState({
-    lightIntensity: 75.3,
-    rainIntensity: 32.8,
-    temperature: 24.5,
-    humidity: 68.2,
-  });
-
-  // Simulate data updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMetrics((prev) => ({
-        lightIntensity: Math.max(0, Math.min(100, prev.lightIntensity + (Math.random() - 0.5) * 5)),
-        rainIntensity: Math.max(0, Math.min(100, prev.rainIntensity + (Math.random() - 0.5) * 3)),
-        temperature: Math.max(0, Math.min(50, prev.temperature + (Math.random() - 0.5) * 2)),
-        humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 4)),
-      }));
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const metrics = useStreetlightData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,43 +15,46 @@ const Dashboard = () => {
           <h2 className="text-xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
             Real-Time Monitoring
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Live environmental data from city sensors</p>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Live environmental data from streetlight sensors
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <MetricCard
-            title="Street Light Intensity"
-            value={metrics.lightIntensity}
-            unit="%"
-            icon={<Lightbulb className="w-6 h-6" />}
-            color="primary"
-          />
-          
-          <MetricCard
-            title="Rain Intensity"
-            value={metrics.rainIntensity}
-            unit="%"
-            icon={<CloudRain className="w-6 h-6" />}
-            color="secondary"
-          />
-          
-          <MetricCard
-            title="Temperature"
-            value={metrics.temperature}
-            unit="°C"
-            icon={<Thermometer className="w-6 h-6" />}
-            color="accent"
-            max={50}
-          />
-          
-          <MetricCard
-            title="Humidity"
-            value={metrics.humidity}
-            unit="%"
-            icon={<Droplets className="w-6 h-6" />}
-            color="secondary"
-          />
-        </div>
+        {metrics ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <MetricCard
+              title="Street Light Intensity"
+              value={metrics.lightIntensity}
+              unit="%"
+              icon={<Lightbulb className="w-6 h-6" />}
+              color="primary"
+            />
+            <MetricCard
+              title="Rain Intensity"
+              value={metrics.rainIntensity}
+              unit="%"
+              icon={<CloudRain className="w-6 h-6" />}
+              color="secondary"
+            />
+            <MetricCard
+              title="Temperature"
+              value={metrics.temperature}
+              unit="°C"
+              icon={<Thermometer className="w-6 h-6" />}
+              color="accent"
+              max={50}
+            />
+            <MetricCard
+              title="Humidity"
+              value={metrics.humidity}
+              unit="%"
+              icon={<Droplets className="w-6 h-6" />}
+              color="secondary"
+            />
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground">Loading data...</p>
+        )}
 
         <div className="mt-8 p-6 bg-card border border-border rounded-lg">
           <h3 className="text-xl font-semibold mb-4 text-primary">System Status</h3>
