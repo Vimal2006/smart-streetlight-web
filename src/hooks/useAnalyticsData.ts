@@ -14,24 +14,38 @@ export function useAnalyticsData() {
   const [historicalData, setHistoricalData] = useState<Metric[]>([]);
 
   useEffect(() => {
-    const dataRef = ref(db, "/streetlightNode1"); // your Firebase path
+    const dataRef = ref(db, "/history"); // <-- now reading from /history
     const unsubscribe = onValue(dataRef, (snapshot) => {
       const value = snapshot.val();
       if (value) {
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-
-        // Append latest reading as new data point
-        setHistoricalData((prev) => [
-          ...prev,
-          {
+        // Convert the Firebase object to an array
+        const entries = Object.entries(value).map(([key, data]: any) => {
+          const timestamp = data.timestamp
+            ? new Date(data.timestamp)
+            : new Date(); // fallback if missing
+          const timeStr = `${timestamp
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${timestamp
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
+          return {
             time: timeStr,
-            light: value.pwmValue,
-            rain: value.rain,
-            temp: value.temperature,
-            humidity: value.humidity,
-          },
-        ].slice(-24)); // keep last 24 entries
+            light: data.pwmValue ?? 0,
+            rain: data.rain ?? 0,
+            temp: data.temperature ?? 0,
+            humidity: data.humidity ?? 0,
+          };
+        });
+
+        // Sort by time (optional but helps keep the graph ordered)
+        const sorted = entries.sort((a, b) => (a.time > b.time ? 1 : -1));
+
+        // Keep only the last 24 entries for display
+        setHistoricalData(sorted.slice(-24));
+      } else {
+        setHistoricalData([]);
       }
     });
 
