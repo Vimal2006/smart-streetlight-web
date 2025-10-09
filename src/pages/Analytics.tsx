@@ -1,21 +1,29 @@
 import Navigation from "@/components/Navigation";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData";
+import { useAnalyticsData, Metric } from "@/hooks/useAnalyticsData";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useState, useEffect } from "react";
 
 const Analytics = () => {
-  const historicalData = useAnalyticsData();
+  const liveData = useAnalyticsData();
+  const [chartData, setChartData] = useState<Metric[]>([]);
 
-  if (!historicalData.length) return <p className="p-6">Waiting for historical data...</p>;
+  useEffect(() => {
+    if (liveData) {
+      setChartData(prev => [...prev.slice(-19), liveData]); // Keep last 20 points
+    }
+  }, [liveData]);
 
-  // Calculate averages
-  const sum = historicalData.reduce((acc, cur) => ({
+  if (!liveData) return <p className="p-6">Waiting for live data...</p>;
+
+  // Calculate averages over the current chart data
+  const sum = chartData.reduce((acc, cur) => ({
     light: acc.light + cur.light,
     rain: acc.rain + cur.rain,
     temp: acc.temp + cur.temp,
     humidity: acc.humidity + cur.humidity,
   }), { light: 0, rain: 0, temp: 0, humidity: 0 });
 
-  const count = historicalData.length;
+  const count = chartData.length;
   const avg = {
     light: +(sum.light / count).toFixed(1),
     rain: +(sum.rain / count).toFixed(1),
@@ -33,13 +41,12 @@ const Analytics = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
       <main className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            Historical Analytics
+            Live Analytics
           </h2>
-          <p className="text-muted-foreground">24-hour trends and patterns</p>
+          <p className="text-muted-foreground">Real-time sensor readings</p>
         </div>
 
         {/* Charts */}
@@ -48,7 +55,7 @@ const Analytics = () => {
           <div className="p-6 bg-card border border-border rounded-lg">
             <h3 className="text-xl font-semibold mb-6 text-primary">Light & Rain Intensity</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={historicalData}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorLight" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
@@ -74,7 +81,7 @@ const Analytics = () => {
           <div className="p-6 bg-card border border-border rounded-lg">
             <h3 className="text-xl font-semibold mb-6 text-accent">Temperature & Humidity</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={historicalData}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" style={{ fontSize: '0.875rem' }} />
                 <YAxis stroke="hsl(var(--muted-foreground))" style={{ fontSize: '0.875rem' }} />
