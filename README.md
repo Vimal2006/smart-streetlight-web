@@ -1,73 +1,39 @@
-# Welcome to your Lovable project
+# Smart Streetlight Web App & Dynamic Firmware
 
-## Project info
+An automated, data-driven smart street lighting system built using a Dual-Core ESP32 processor running FreeRTOS. The system calculates an optimized PWM dimming curve via environmental data fusion and streams live analytics to a responsive React/Supabase web dashboard.
 
-**URL**: https://lovable.dev/projects/b2da4bfb-966a-4aa8-a32c-e245e6bf71e3
+🌐 **Live Dashboard Link:** [smart-streetlight-web.vercel.app](https://smart-streetlight-web.vercel.app)
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+* **Multi-Sensor Edge Intelligence:** Fuses real-time data from an LDR (Light Dependent Resistor), DHT11 Temperature & Humidity sensor, and an analog Water/Rainfall tracking module.
+* **Deterministic Dual-Core Processing (FreeRTOS):** Employs safe multi-task management using distinct thread execution routines decoupled through FreeRTOS Queues (`xQueue`).
+* **Weighted Power Optimization Formula:** Computes adaptive dimming parameters utilizing multi-variable linear logic to optimize power grids:
+  $$PWM_{Final} = 0.8 \cdot LDR_{Norm} + 0.1 \cdot Rain_{Norm} + 0.02 \cdot (1 - Temp_{Norm}) + 0.08 \cdot Hum_{Norm}$$
+* **I2C Master-Slave Communication:** Distributes real-time system executions by translating calculated duty cycles into an 8-bit signal transmitted over a $50\text{ kHz}$ I2C interface to isolated peripheral LED controllers.
+* **Live Firebase Integration:** Connects seamlessly with real-time cloud clusters to bridge physical deployments with remote control desks.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b2da4bfb-966a-4aa8-a32c-e245e6bf71e3) and start prompting.
+## 🛠️ Hardware Ecosystem
 
-Changes made via Lovable will be committed automatically to this repo.
+* **Core Processor:** ESP32 (Dual-Core, 12-bit ADC resolution, configured with 11dB attenuation)
+* **Light Sensor:** Analog LDR module (Pin 32)
+* **Climate Sensor:** DHT11 Digital Temperature & Humidity Sensor (Pin 4)
+* **Precipitation Sensor:** Analog Water Level/Rain sensor (Pin 33)
+* **Local Actuator:** High-frequency PWM Dimming Unit (Pin 5)
+* **Peripheral Bus:** Dedicated I2C Bus (`SDA: Pin 21`, `SCL: Pin 22`) running at Slave Address `0x08`.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📂 Repository Architecture
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b2da4bfb-966a-4aa8-a32c-e245e6bf71e3) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```text
+smart-streetlight-web/
+├── firmware/            # Embedded C++ Firmware
+│   ├── I2C_Slave.ino       # Target logic mapping local LED controllers
+│   └── LDR_interfacing.ino # Edge computing firmware & telemetry loop
+├── src/                 # React Web Application Client (Dashboard)
+├── supabase/            # Database definitions & real-time configurations
+├── .gitignore           # Keeps critical local credential logs safe (.env)
+└── README.md            # System overview documentation
