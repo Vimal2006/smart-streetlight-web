@@ -30,7 +30,7 @@ An automated, data-driven smart street lighting system built using a Dual-Core E
 
 ```text
 smart-streetlight-web/
-├── firmware/            # Embedded C++ Firmware
+├── firmware/            # Embedded C Firmware
 │   ├── I2C_Slave.ino       # Target logic mapping local LED controllers
 │   └── LDR_interfacing.ino # Edge computing firmware & telemetry loop
 ├── src/                 # React Web Application Client (Dashboard)
